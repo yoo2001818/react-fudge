@@ -37,10 +37,11 @@ export default function connectFudge(
   actionValidations = defaultActionValidations,
   mapStateToProps = defaultStateToProps,
   mergeProps = defaultMergeProps, options = {
-    pure: true
+    pure: true,
+    updateEvent: null
   }
 ) {
-  const { pure } = options;
+  const { pure, updateEvent } = options;
   const version = VERSION ++;
 
   return function wrapWithConnect(WrappedComponent) {
@@ -82,9 +83,8 @@ export default function connectFudge(
           this.engine.attachHook(key, this.validations[key], true);
           hasKey = true;
         }
-        if (hasKey) {
-          this.engine.attachHook('external.domUpdate:post', this.checkUpdate,
-            true);
+        if (hasKey && updateEvent != null) {
+          this.engine.attachHook(updateEvent, this.checkUpdate, true);
         }
         this.attached = true;
       }
@@ -95,13 +95,14 @@ export default function connectFudge(
           this.engine.detachHook(key, this.validations[key]);
           hasKey = true;
         }
-        if (hasKey) {
-          this.engine.detachHook('external.domUpdate:post', this.checkUpdate);
+        if (hasKey && updateEvent != null) {
+          this.engine.detachHook(updateEvent, this.checkUpdate);
         }
         this.attached = false;
       }
       handleChange() {
         this.stateChanged = true;
+        if (updateEvent == null) this.forceUpdate();
       }
       checkUpdate(args) {
         if (this.stateChanged) this.forceUpdate();

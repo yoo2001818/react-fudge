@@ -1,6 +1,6 @@
 {
   "name": "react-fudge",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "React binding for Fudge ECS Framework",
   "keywords": [],
   "homepage": "https://github.com/yoo2001818/react-fudge",
